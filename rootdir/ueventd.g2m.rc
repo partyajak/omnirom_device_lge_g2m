@@ -124,8 +124,8 @@
 /dev/msm_vidc_dec_sec     0660   system     audio
 /dev/msm_vidc_enc         0660   system     audio
 /dev/msm_rotator          0660   system     system
-/dev/hw_random            0664   root       root
-/dev/adsprpc-smd          0660   media      camera
+/dev/hw_random            0660   system     system
+/dev/adsprpc-smd          0664   system     system
 
 #permissions for audio
 /dev/msm_qcelp            0660   system     audio
@@ -188,6 +188,8 @@
 #nfc permissions
 /dev/nfc-nci              0660    nfc         nfc
 /dev/pn547                0660    nfc         nfc
+/dev/pn544                0600    nfc        nfc
+
 
 # UIO devices
 /dev/uio0                 0660   system     system
