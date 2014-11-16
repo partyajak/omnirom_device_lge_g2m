@@ -1,17 +1,28 @@
 on init
-	mkdir /mpt 0775 system system
-	mkdir /cust 0771 system system
-	wait /dev/block/platform/msm_sdcc.1/by-name/mpt
+	mkdir /cust 0775 system system
 	wait /dev/block/platform/msm_sdcc.1/by-name/cust
-	exec /sbin/setup_fs_static /dev/block/platform/msm_sdcc.1/by-name/mpt /dev/block/platform/msm_sdcc.1/by-name/cust no_reboot
+	exec /sbin/setup_fs_static /dev/block/platform/msm_sdcc.1/by-name/cust
+	
+	mkdir /mpt 0775 system system
+	wait /dev/block/platform/msm_sdcc.1/by-name/mpt
+	exec /sbin/setup_fs_static /dev/block/platform/msm_sdcc.1/by-name/mpt
 
 on fs
 	wait /dev/block/platform/msm_sdcc.1/by-name/cust
-	exec /system/bin/e2fsck -p /dev/block/platform/msm_sdcc.1/by-name/cust
-	mount ext4 /dev/block/platform/msm_sdcc.1/by-name/cust /cust ro nodev barrier=1 noauto_da_alloc
+    	exec /system/bin/e2fsck -p /dev/block/platform/msm_sdcc.1/by-name/cust
+    	mount ext4 /dev/block/platform/msm_sdcc.1/by-name/cust /cust ro nodev barrier=1 noauto_da_alloc
 
+	wait /dev/block/platform/msm_sdcc.1/by-name/mpt
+    	exec /system/bin/e2fsck -p /dev/block/platform/msm_sdcc.1/by-name/mpt
+    	mount ext4 /dev/block/platform/msm_sdcc.1/by-name/mpt /mpt ro nodev barrier=1 noauto_da_alloc
 on post-fs-data
-	chown system system /mpt
-	chmod 0775 /mpt
-	chown system system /cust
-	chmod 0771 /cust
+    mkdir /data/tombstones 0771 system system
+    mkdir /tombstones/modem 0771 system system
+    
+    #cust partition permission change
+
+    chown system system /cust
+    chmod 0775 /cust
+    
+    chown system system /mpt
+    chmod 0775 /mpt

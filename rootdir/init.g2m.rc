@@ -6,6 +6,12 @@ on early-init
     mkdir /firmware 0771 system system
     symlink /data/tombstones /tombstones
 
+# Begin Immersion changes
+    export VIBE_PIPE_PATH /dev/pipes
+    mkdir /dev/pipes 0771 shell shell
+# End Immersion changes
+
+
 on init
 
     chmod 755 /sbin/bbx
@@ -14,10 +20,6 @@ on init
 
     # CM: We use our own ril-daemon service definition, see mmi-ril-daemon
     stop ril-daemon
-
-    # NFC PN544
-    chown nfc nfc /sys/devices/virtual/misc/pn544/pn544_control_dev
-    chmod 0660 /sys/devices/virtual/misc/pn544/pn544_control_dev
 
 on fs
     mount_all fstab.g2m
@@ -32,7 +34,7 @@ on fs
     wait /dev/block/platform/msm_sdcc.1/by-name/modem
     mount vfat /dev/block/platform/msm_sdcc.1/by-name/modem /firmware ro shortname=lower,uid=1000,gid=1000,dmask=227,fmask=337
 
-    write /sys/kernel/boot_adsp/boot 1
+	write /sys/kernel/boot_adsp/boot 1
 
 # In order to keep plenty of large order chunks.
     write /proc/sys/vm/min_free_kbytes 5120
@@ -43,27 +45,34 @@ on post-fs-data
 
     setprop vold.post_fs_data_done 1
 
-    
-
 on early-boot
 
 on boot
 
-
-
+#LGE_CHANGE_S, for LP5521 RGB_LED
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/led_current_index
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/led_pattern
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/led_blink
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/leds/R/brightness
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/leds/G/brightness
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/leds/B/brightness
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/leds/R/led_current
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/leds/G/led_current
+	chown system system /sys/devices/f9925000.i2c/i2c-2/2-0032/leds/B/led_current
+#LGE_CHANGE_E, for LP5521 RGB_LED
 
 #start camera server as daemon
 service qcamerasvr /system/bin/mm-qcamera-daemon
     class late_start
     user camera
     group camera system inet input graphics
-
+    
 #LGE_CHANGE_S, restart qcamerasvr when restarting mediaserver and servicemanager, yousung.kang@lge.com
-on property:init.svc.media=restarting
-    restart qcamerasvr
-on property:init.svc.servicemanager=restarting
-    restart qcamerasvr
-#LGE_CHANGE_E, restart qcamerasvr when restarting mediaserver and servicemanager, yousung.kang@lge.com
+   on property:init.svc.media=restarting
+       restart qcamerasvr
+   on property:init.svc.servicemanager=restarting
+       restart qcamerasvr
+#LGE_CHANGE_E, restart qcamerasvr when restarting mediaserver and servicemanager, yousung.kang@lge.com  
 
 # Allow usb charging to be disabled persistently
 on property:persist.usb.chgdisabled=1
@@ -94,7 +103,15 @@ service thermal-engine /system/bin/thermal-engine
    class main
    user root
    group root
-  
+   
+# Begin Immersion changes
+service immvibed /system/bin/immvibed
+    class main
+    user shell
+    group shell system
+    oneshot
+# End Immersion changes
+
 service qrngd /system/bin/qrngd -f
    class main
    user root
@@ -116,7 +133,8 @@ service audiod /system/bin/audiod
    group system
 
 on boot
-
+    start imsqmidaemon
+    insmod /system/lib/modules/adsprpc.ko
     chown system system /sys/class/power_supply/battery/pseudo_batt
 
 service adsprpcd /system/bin/adsprpcd

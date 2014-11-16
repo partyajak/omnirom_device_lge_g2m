@@ -111,31 +111,31 @@ on early-boot
     write /sys/module/lowmemorykiller/parameters/lmk_fast_run 0
 
 on boot
-    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
-    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
-    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
-    chown bluetooth bluetooth /sys/module/hci_uart/parameters/ath_lpm
-    chown bluetooth bluetooth /sys/module/hci_uart/parameters/ath_btwrite
-    chown system system /sys/module/sco/parameters/disable_esco
-    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
-    chmod 0660 /sys/module/bluetooth_power/parameters/power
-    chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
-    chmod 0660 /sys/class/rfkill/rfkill0/state
-    chmod 0660 /proc/bluetooth/sleep/proto
-    chown bluetooth bluetooth /dev/ttyHS0
-    chmod 0660 /sys/module/hci_uart/parameters/ath_lpm
-    chmod 0660 /sys/module/hci_uart/parameters/ath_btwrite
-    chmod 0660 /dev/ttyHS0
-    chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
-    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
+#LG_UPDATE_START :  move to init.zetaw.bt_vendor.rc to seperate vendor's resource 20140106, [START]
+#    chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
+#    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+#    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+#    chown bluetooth bluetooth /proc/bluetooth/sleep/proto
+#    chown bluetooth bluetooth /sys/module/hci_uart/parameters/ath_lpm
+#    chown bluetooth bluetooth /sys/module/hci_uart/parameters/ath_btwrite
+#    chown system system /sys/module/sco/parameters/disable_esco
+#    chown bluetooth bluetooth /sys/module/hci_smd/parameters/hcismd_set
+#    chmod 0660 /sys/module/bluetooth_power/parameters/power
+#    chmod 0660 /sys/module/hci_smd/parameters/hcismd_set
+#    chmod 0660 /sys/class/rfkill/rfkill0/state
+#    chmod 0660 /proc/bluetooth/sleep/proto
+#    chown bluetooth bluetooth /dev/ttyHS0
+#    chmod 0660 /sys/module/hci_uart/parameters/ath_lpm
+#    chmod 0660 /sys/module/hci_uart/parameters/ath_btwrite
+#    chmod 0660 /dev/ttyHS0
+#    chown bluetooth bluetooth /sys/devices/platform/msm_serial_hs.0/clock
+#    chmod 0660 /sys/devices/platform/msm_serial_hs.0/clock
+#	 chown system system /sys/devices/platform/kcal_ctrl.0/kcal
+#	 chown system system /sys/devices/platform/kcal_ctrl.0/kcal_ctrl
 
-    chmod 0660 /dev/ttyHS2
-    chown bluetooth bluetooth /dev/ttyHS2
-
- # NFC local data and nfcee xml storage
-    mkdir /data/nfc 0770 nfc nfc
-    mkdir /data/nfc/param 0770 nfc nfc
+#    chmod 0660 /dev/ttyHS2
+#    chown bluetooth bluetooth /dev/ttyHS2
+#LG_UPDATE_END :  20140106, [END]
 
     #Create QMUX deamon socket area
     mkdir /dev/socket/qmux_radio 0770 radio radio
@@ -162,17 +162,6 @@ on boot
 
     #Remove SUID bit for iproute2 ip tool
     chmod 0755 /system/bin/ip
-
-    #Create directory used by sensor subsystem(dsps)
-    mkdir /data/system/sensors
-    chmod 665 /data/system/sensors
-    write /data/system/sensors/settings 1
-    chmod 660 /data/system/sensors/settings
-    # AKM setting data
-    mkdir /data/misc/sensors
-    chmod 775 /data/misc/sensors
-    mkdir /persist/sensors
-    chmod 775 /persist/sensors
 
     chmod 0444 /sys/devices/platform/msm_hsusb/gadget/usb_state
 
@@ -395,21 +384,34 @@ service usbhub_init /system/bin/usbhub_init
    disabled
    oneshot
 
+on property:persist.radio.atfwd.start=false
+    stop atfwd
 on property:init.svc.surfaceflinger=stopped
     stop ppd
     stop hdmid
 
+on property:ro.board.platform=msm7630_fusion
+    start usbhub_init
 on property:init.svc.wpa_supplicant=stopped
     stop dhcpcd
 
 on property:bluetooth.isEnabled=true
     start btwlancoex
     write /sys/class/bluetooth/hci0/idle_timeout 7000
-on property:bluetooth.sap.status=running
-    start bt-sap
 
-on property:bluetooth.sap.status=stopped
-    stop bt-sap
+#LG_UPDATE_START :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [START]
+#on property:bluetooth.sap.status=running
+#    start bt-sap
+
+#on property:bluetooth.sap.status=stopped
+#    stop bt-sap
+
+#on property:bluetooth.dun.status=running
+#    start bt-dun
+
+#on property:bluetooth.dun.status=stopped
+#    stop bt-dun
+#LG_UPDATE_END :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [END]
 
 on property:ro.bluetooth.ftm_enabled=true
     start ftmd
@@ -472,16 +474,50 @@ on property:ro.boot.emmc=true
 on property:ro.boot.emmc=true
     start rfs_access
 
+#LG_UPDATE_START :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [START]
+#on property:bluetooth.start_hci=true
+#    start start_hci_filter
+
+#on property:bluetooth.start_hci=false
+#    stop start_hci_filter
+
+#service start_hci_filter /system/bin/wcnss_filter
+#    class late_start
+#    user bluetooth
+#    group bluetooth
+#    disabled
+
+#service config_bluetooth /system/bin/sh /system/etc/init.zetaw.bt.sh "onboot"
+#    class core
+#    user root
+#    oneshot
+
+#service hciattach /system/bin/sh /system/etc/init.zetaw.bt.sh
+#    class late_start
+#    user bluetooth
+#    group bluetooth net_bt_admin
+#    disabled
+#    oneshot
+
+#on property:bluetooth.hciattach=true
+#    start hciattach
+
+#on property:bluetooth.hciattach=false
+#    setprop bluetooth.status off
+
+#service hciattach_ath3k /system/bin/sh /system/etc/init.ath3k.bt.sh
+#     class late_start
+#     user bluetooth
+#     group system bluetooth net_bt_admin misc
+#     disabled
+#     oneshot
+#LG_UPDATE_END :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [END]
+
 service bt-dun /system/bin/dun-server /dev/smd7 /dev/rfcomm0
     class late_start
     user bluetooth
     group bluetooth net_bt_admin inet
     disabled
-    oneshot
-
-service config_bluetooth /system/bin/sh /system/etc/init.zetaw.bt.sh
-    class core
-    user root
     oneshot
 
 service bt-sap /system/bin/sapd 15
@@ -530,7 +566,8 @@ service netmgrd /system/bin/netmgrd
 service sensors /system/bin/sensors.qcom
     class late_start
     user root
-    group root radio system
+    group root
+    disabled
 
 on property:ro.use_data_netmgrd=false
     # netmgr not supported on specific target
@@ -541,6 +578,14 @@ on property:ro.use_data_netmgrd=false
 on property:ro.data.large_tcp_window_size=true
     write /proc/sys/net/ipv4/tcp_adv_win_scale  2
 
+#LG_UPDATE_START :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [START]
+#service btwlancoex /system/bin/sh /system/etc/init.zetaw.coex.sh
+#    class late_start
+#    user bluetooth
+#    group bluetooth net_bt_admin inet net_admin net_raw
+#    disabled
+#    oneshot
+#LG_UPDATE_END :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [END]
 service amp_init /system/bin/amploader -i
     class late_start
     user root
@@ -578,7 +623,7 @@ service p2p_supplicant /system/bin/wpa_supplicant \
 service wpa_supplicant /system/bin/wpa_supplicant \
     -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
     -I/system/etc/wifi/wpa_supplicant_overlay.conf \
-    -O/data/misc/wifi/sockets \
+    -O/data/misc/wifi/sockets -d \
     -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
     #   we will start as root and wpa_supplicant will switch to user wifi
     #   after setting up the capabilities required for WEXT
@@ -589,15 +634,17 @@ service wpa_supplicant /system/bin/wpa_supplicant \
     disabled
     oneshot
 
-service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
+#LGE_CHANGE_S, 20120709, moon-wifi@lge.com by 2lee, Remove 'G'(DHCPCD_GATEWAY) option.
+service dhcpcd_wlan0 /system/bin/dhcpcd -ABKL
     class late_start
     disabled
     oneshot
 
-service dhcpcd_p2p /system/bin/dhcpcd -ABKLG
+service dhcpcd_p2p /system/bin/dhcpcd -ABKL
     class late_start
     disabled
     oneshot
+#LGE_CHANGE_E, 20120709, moon-wifi@lge.com by 2lee, Remove 'G'(DHCPCD_GATEWAY) option.
 
 service iprenew_wlan0 /system/bin/dhcpcd -n
     class late_start
@@ -609,6 +656,11 @@ service iprenew_p2p /system/bin/dhcpcd -n
     disabled
     oneshot
 
+service ptt_socket_app /system/bin/ptt_socket_app
+    class main
+    user system
+    group system
+    oneshot
 service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
     class late_start
     disabled
@@ -676,6 +728,13 @@ service fm_dl /system/bin/sh /system/etc/init.zetaw.fm.sh
     disabled
     oneshot
 
+on property:crypto.driver.load=1
+     insmod /system/lib/modules/qce.ko
+     insmod /system/lib/modules/qcedev.ko
+
+on property:crypto.driver.load=0
+     exec /system/bin/rmmod qcedev.ko
+     exec /system/bin/rmmod qce.ko
 service drmdiag /system/bin/drmdiagapp
     class late_start
      user root
@@ -714,6 +773,15 @@ service wifi-crda /system/bin/sh /system/etc/init.crda.sh
 on property:init.svc.bootanim=stopped
     start zetaw-post-boot
 
+service atfwd /system/bin/ATFWD-daemon
+    class late_start
+    user system
+    group system radio
+
+service hdmid /system/bin/hdmid
+    class late_start
+    socket hdmid stream 0660 root system graphics
+    disabled
 service ppd /system/bin/mm-pp-daemon
     class late_start
     user system
@@ -767,7 +835,7 @@ service ril-daemon2 /system/bin/rild -c 2
     socket rild-debug2 stream 660 radio system
     user root
     disabled
-    group radio cache inet misc audio sdcard_r sdcard_rw diag qcom_diag log
+    group radio cache inet misc audio sdcard_r sdcard_rw qcom_oncrpc diag qcom_diag log
 
 service profiler_daemon /system/bin/profiler_daemon
     class late_start
