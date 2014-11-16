@@ -479,7 +479,7 @@ service bt-dun /system/bin/dun-server /dev/smd7 /dev/rfcomm0
     disabled
     oneshot
 
-service config_bluetooth /system/bin/sh /system/etc/init.qcom.bt.sh
+service config_bluetooth /system/bin/sh /system/etc/init.zetaw.bt.sh
     class core
     user root
     oneshot
