@@ -1,3 +1,4 @@
+
 on init
 	mkdir /cust 0775 system system
 	wait /dev/block/platform/msm_sdcc.1/by-name/cust
@@ -15,6 +16,7 @@ on fs
 	wait /dev/block/platform/msm_sdcc.1/by-name/mpt
     	exec /system/bin/e2fsck -p /dev/block/platform/msm_sdcc.1/by-name/mpt
     	mount ext4 /dev/block/platform/msm_sdcc.1/by-name/mpt /mpt ro nodev barrier=1 noauto_da_alloc
+
 on post-fs-data
     mkdir /data/tombstones 0771 system system
     mkdir /tombstones/modem 0771 system system

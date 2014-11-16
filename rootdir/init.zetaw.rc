@@ -61,6 +61,7 @@ on init
     symlink /storage/usbdisk /usbdisk
     symlink /storage/usbdisk /mnt/usbdisk
 
+    # LGE_UPDATE_START, 2013/5/8, G2-FS@lge.com
     wait /dev/block/platform/msm_sdcc.1/by-name/userdata
     wait /dev/block/platform/msm_sdcc.1/by-name/cache
     wait /dev/block/platform/msm_sdcc.1/by-name/drm
@@ -71,8 +72,7 @@ on init
         /dev/block/platform/msm_sdcc.1/by-name/drm \
         /dev/block/platform/msm_sdcc.1/by-name/sns \
         no_reboot
-
-    
+    # LGE_UPDATE_END
 
 # SD Enc
     setprop ro.ssbd.session /dev/block/platform/msm_sdcc.1/by-name/eksst
@@ -431,6 +431,10 @@ service zetaw-c_main-sh /system/bin/sh /init.class_main.sh
     user root
     oneshot
 
+service ril-qmi /system/bin/sh /init.zetaw.ril.sh
+    class main
+    user root
+    oneshot
 service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
     class late_start
     
@@ -586,6 +590,7 @@ on property:ro.data.large_tcp_window_size=true
 #    disabled
 #    oneshot
 #LG_UPDATE_END :  move to init.zetaw.bt_qct.rc to seperate vendor's resource 20140108, [END]
+
 service amp_init /system/bin/amploader -i
     class late_start
     user root
@@ -661,6 +666,7 @@ service ptt_socket_app /system/bin/ptt_socket_app
     user system
     group system
     oneshot
+
 service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
     class late_start
     disabled
@@ -720,7 +726,6 @@ service lowi-server /system/bin/lowi-server
     user gps
     group gps net_admin wifi inet qcom_diag
     disabled
-
 service fm_dl /system/bin/sh /system/etc/init.zetaw.fm.sh
     class late_start
     user root
@@ -735,6 +740,7 @@ on property:crypto.driver.load=1
 on property:crypto.driver.load=0
      exec /system/bin/rmmod qcedev.ko
      exec /system/bin/rmmod qce.ko
+
 service drmdiag /system/bin/drmdiagapp
     class late_start
      user root
@@ -770,6 +776,7 @@ service wifi-crda /system/bin/sh /system/etc/init.crda.sh
    disabled
    oneshot
 
+
 on property:init.svc.bootanim=stopped
     start zetaw-post-boot
 
@@ -782,6 +789,7 @@ service hdmid /system/bin/hdmid
     class late_start
     socket hdmid stream 0660 root system graphics
     disabled
+
 service ppd /system/bin/mm-pp-daemon
     class late_start
     user system
@@ -835,7 +843,7 @@ service ril-daemon2 /system/bin/rild -c 2
     socket rild-debug2 stream 660 radio system
     user root
     disabled
-    group radio cache inet misc audio sdcard_r sdcard_rw qcom_oncrpc diag qcom_diag log
+    group radio cache inet misc audio sdcard_r sdcard_rw diag qcom_diag log
 
 service profiler_daemon /system/bin/profiler_daemon
     class late_start

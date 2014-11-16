@@ -122,7 +122,7 @@ target=`getprop ro.product.device`
 cdromname="/dev/block/platform/msm_sdcc.1/by-name/cdrom"
 cdromenable=`getprop persist.service.cdrom.enable`
 case "$target" in
-        "msm8226" | "msm8610")
+        "msm7627a")
                 case "$cdromenable" in
                         0)
                                 echo "" > /sys/class/android_usb/android0/f_mass_storage/lun0/file
@@ -140,19 +140,7 @@ esac
 #
 case "$target" in
     "msm8974")
-        echo hsusb > /sys/bus/platform/devices/usb_bam/enable
-    ;;
-    "apq8084")
-	if [ "$baseband" == "apq" ]; then
-		echo "msm_hsic_host" > /sys/bus/platform/drivers/xhci_msm_hsic/unbind
-	fi
-    ;;
-    "msm8226")
-         if [ -e /sys/bus/platform/drivers/msm_hsic_host ]; then
-             if [ ! -L /sys/bus/usb/devices/1-1 ]; then
-                 echo msm_hsic_host > /sys/bus/platform/drivers/msm_hsic_host/unbind
-             fi
-         fi
+        echo ssusb > /sys/bus/platform/devices/usb_bam/enable
     ;;
 esac
 
