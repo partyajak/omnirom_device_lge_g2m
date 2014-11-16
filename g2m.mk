@@ -97,6 +97,8 @@ PRODUCT_COPY_FILES += \
     device/lge/g2m/prebuilt/etc/nfcee_access.xml:system/etc/nfcee_access.xml \
     device/lge/g2m/prebuilt/etc/quipc.conf:system/etc/quipc.conf \
     device/lge/g2m/prebuilt/etc/init.zetaw.bt.sh:system/etc/init.zetaw.bt.sh \
+    device/lge/g2m/prebuilt/etc/init.ath3k.bt.sh:system/etc/init.ath3k.bt.sh \
+    device/lge/g2m/prebuilt/etc/init.zetaw.coex.sh:system/etc/init.zetaw.coex.sh \
 
 
 # Ramdisk
