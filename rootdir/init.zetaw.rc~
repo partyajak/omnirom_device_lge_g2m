@@ -72,7 +72,8 @@ on init
         /dev/block/platform/msm_sdcc.1/by-name/sns \
         no_reboot
 
-    
+    # NFC fix
+    symlink /dev/pn547 /dev/pn544
 
 # SD Enc
     setprop ro.ssbd.session /dev/block/platform/msm_sdcc.1/by-name/eksst
@@ -111,10 +112,6 @@ on early-boot
     write /sys/module/lowmemorykiller/parameters/lmk_fast_run 0
 
 on boot
-
- # NFC local data and nfcee xml storage
-    mkdir /data/nfc 0770 nfc nfc
-    mkdir /data/nfc/param 0770 nfc nfc
 
     #Create QMUX deamon socket area
     mkdir /dev/socket/qmux_radio 0770 radio radio

@@ -33,5 +33,11 @@
     "target_path": "hardware/qcom/audio-caf-bfam",
     "revision":	"android-4.4"
   }
- 
+  ,
+  {
+    "remote":	"omnirom",
+    "remove-repository": "android_hardware_qcom_bt",
+    "target_path": "hardware/qcom/bt",
+    "revision":	"android-4.4"
+  }
 ]
