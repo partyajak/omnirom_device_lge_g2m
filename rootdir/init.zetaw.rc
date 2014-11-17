@@ -74,6 +74,9 @@ on init
         no_reboot
     # LGE_UPDATE_END
 
+    # NFC fix
+    symlink /dev/pn547 /dev/pn544
+
 # SD Enc
     setprop ro.ssbd.session /dev/block/platform/msm_sdcc.1/by-name/eksst
     setprop ro.ssbd.offset 0
